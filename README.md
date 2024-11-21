@@ -9,7 +9,9 @@ WHERE data_coluna >= CURRENT_DATE - INTERVAL '30 days';
 ```
 
 CURRENT_DATE: Retorna a data atual (sem a parte de hora).
+ <br>
 INTERVAL '30 days': Representa um intervalo de 30 dias.
+<br>
 data_coluna >= CURRENT_DATE - INTERVAL '30 days': Filtra os registros onde a data na coluna data_coluna é igual ou posterior a 30 dias atrás.
 
 
