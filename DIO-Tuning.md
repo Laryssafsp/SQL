@@ -172,7 +172,7 @@ Criando indíce e realizando a mesma consulta:
 CREATE INDEX idx_cliente_id ON pedidos(cliente_id);
 CREATE INDEX idx_cliente_cidade ON clientes(cidade);
 ```
-= Tempo de resposta: 3.2s (-16k%)
+= Tempo de resposta: 3.2s (-16k %)
 
 #### Resumo e Próximos Passos
 - Interpretar planos de execução
@@ -185,8 +185,8 @@ CREATE INDEX idx_cliente_cidade ON clientes(cidade);
   - Mesmo com índices criados, certas práticas podem invalidá-los, fazendo com que o banco execute uma varredura completa da tabela
 
 -  Materiais recomendados:
-  - [Use the Index, Luke!](https://use-the-index-luke.com/)
-  - [Documentacao oficial EXPLAIN (PostgreSQL/MySQL)](https://www.postgresql.org/docs/current/sql-explain.html)
+    - [Use the Index, Luke!](https://use-the-index-luke.com/)
+    - [Documentacao oficial EXPLAIN (PostgreSQL/MySQL)](https://www.postgresql.org/docs/current/sql-explain.html)
 
 
 
