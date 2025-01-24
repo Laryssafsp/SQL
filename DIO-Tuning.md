@@ -157,6 +157,7 @@ GROUP BY clientes.nome;
 
 #### Criar índices em colunas filtradas e JOINs
 - Colunas usadas em condições de filtro (WHERE) e em JOINs se beneficiam muito de ndices, tornando as operações mais rápidas
+- Excesso de índices causam lentidão no INSERT? Sim! Analisar Caso o nº de inserts seja menor que a consulta de registro por dias, analisar o custo/benefício pois é o fator determinante para  a estratégia de otimização. Bancos mais transacionais, ou seja, que tem mais insets do que consultas terão menos índices. Quando é uma base análitica, insert menor do que select, a necessidade de criação de índices é maior.
 ```
 -- CRIE ÍNDICES EM COLUNAS QUE SERÃO FREQUENTEMENTE USADAS EM FILTROS
 SELECT p.id, p.valor_total, c.nome
