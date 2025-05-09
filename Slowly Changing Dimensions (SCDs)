@@ -60,7 +60,116 @@ Existem **sete tipos principais de SCDs**: Tipo 0, 1, 2, 3, 4, 5 e 6. Cada um li
 
 ---
 
-## Exemplos
+## Exemplos de Slowly Changing Dimensions (SCD)
 
-*Adicione aqui exemplos práticos conforme necessário, como tabelas, trechos de SQL ou diagramas.*
+### 🔒 SCD Tipo 0 – Retenção de Dados (Sem Mudanças)
+
+**Situação:** Um cliente altera o nome, mas a empresa decide não atualizar esse dado.
+
+| ID Cliente | Nome       | CPF           |
+|------------|------------|---------------|
+| 1          | João Silva | 123.456.789-00 |
+
+> **Nova tentativa de alteração:** Nome atualizado para "João S. Oliveira"  
+> **Resultado:** Nome continua sendo "João Silva" – alteração ignorada.
+
+---
+
+### 🔁 SCD Tipo 1 – Sobrescrita Simples
+
+**Situação:** Cliente muda de cidade, e a empresa atualiza o dado diretamente.
+
+**Antes:**
+
+| ID Cliente | Nome       | Cidade     |
+|------------|------------|------------|
+| 1          | Ana Souza  | São Paulo  |
+
+**Após atualização:**
+
+| ID Cliente | Nome       | Cidade     |
+|------------|------------|------------|
+| 1          | Ana Souza  | Campinas   |
+
+> **Histórico perdido:** Não é possível saber que Ana Souza morava em São Paulo.
+
+---
+
+### 📜 SCD Tipo 2 – Histórico Completo
+
+**Situação:** Cliente muda de cidade, e o histórico é mantido com múltiplas linhas.
+
+| ID Dimensão | ID Cliente | Nome       | Cidade     | Início Vigência | Fim Vigência | Status  |
+|-------------|------------|------------|------------|------------------|--------------|---------|
+| 101         | 1          | Ana Souza  | São Paulo  | 2022-01-01       | 2023-03-15   | Inativo |
+| 102         | 1          | Ana Souza  | Campinas   | 2023-03-16       | NULL         | Ativo   |
+
+> **Consulta histórica:** Podemos saber onde o cliente morava em qualquer data.
+
+---
+
+### 🔄 SCD Tipo 3 – Histórico Limitado
+
+**Situação:** Mantemos o valor atual e o valor anterior de uma cidade.
+
+| ID Cliente | Nome       | Cidade Atual | Cidade Anterior |
+|------------|------------|---------------|------------------|
+| 1          | Ana Souza  | Campinas      | São Paulo        |
+
+> **Limitação:** Se houver mais de uma mudança, só se mantém o último histórico.
+
+---
+
+### 🗃️ SCD Tipo 4 – Tabela Histórica Separada
+
+**Dimensão Principal:**
+
+| ID Cliente | Nome       | Cidade     |
+|------------|------------|------------|
+| 1          | Ana Souza  | Campinas   |
+
+**Tabela Histórica:**
+
+| ID Histórico | ID Cliente | Nome       | Cidade     | Data da Mudança |
+|--------------|------------|------------|------------|------------------|
+| 1            | 1          | Ana Souza  | São Paulo  | 2022-01-01       |
+| 2            | 1          | Ana Souza  | Campinas   | 2023-03-16       |
+
+> **Boa prática:** Histórico não interfere na performance da tabela principal.
+
+---
+
+### 🧩 SCD Tipo 5 – Tipo 1 + Tipo 4
+
+**Dimensão Principal (sobrescrita):**
+
+| ID Cliente | Nome       | Cidade     |
+|------------|------------|------------|
+| 1          | Ana Souza  | Campinas   |
+
+**Tabela Histórica (versões anteriores):**
+
+| ID Histórico | ID Cliente | Cidade     | Vigência Início | Vigência Fim |
+|--------------|------------|------------|------------------|--------------|
+| 1            | 1          | São Paulo  | 2022-01-01       | 2023-03-15   |
+| 2            | 1          | Campinas   | 2023-03-16       | NULL         |
+
+> **Flexível:** Combina performance com histórico detalhado.
+
+---
+
+### 🧬 SCD Tipo 6 – Dimensão Híbrida (1 + 2 + 3)
+
+**Situação:** Um cliente muda de cidade e queremos:
+- Manter o histórico (Tipo 2),
+- Atualizar o dado atual (Tipo 1),
+- Armazenar o valor anterior (Tipo 3).
+
+| ID Dimensão | ID Cliente | Nome       | Cidade Atual | Cidade Anterior | Início Vigência | Fim Vigência | Status  |
+|-------------|------------|------------|----------------|------------------|------------------|--------------|---------|
+| 102         | 1          | Ana Souza  | Campinas       | São Paulo        | 2023-03-16       | NULL         | Ativo   |
+
+> **Nota:** Essa estrutura precisa de lógica extra no ETL, mas é altamente informativa.
+
+---
 
