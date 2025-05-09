@@ -1,0 +1,66 @@
+# Slowly Changing Dimensions (SCD)
+
+## O que são Slowly Changing Dimensions?
+
+**Slowly Changing Dimensions (SCDs)** são técnicas utilizadas em projetos de **Business Intelligence (BI)** e **Data Warehousing** para gerenciar e acompanhar mudanças nos dados dimensionais ao longo do tempo.
+
+Esses dados dimensionais representam informações descritivas — como nomes de clientes, endereços, produtos, entre outros — que podem sofrer alterações com o tempo. As SCDs garantem que essas mudanças sejam tratadas de forma adequada, permitindo análises precisas tanto do estado atual quanto do histórico dos dados.
+
+As SCDs são fundamentais para manter a integridade histórica dos dados, especialmente em sistemas analíticos. Por exemplo, uma empresa pode querer analisar as vendas considerando o endereço do cliente na data da compra, e não o endereço atual.
+
+Existem **sete tipos principais de SCDs**: Tipo 0, 1, 2, 3, 4, 5 e 6. Cada um lida de forma distinta com as atualizações nos dados dimensionais.
+
+---
+
+## Tipos de Slowly Changing Dimensions
+
+### 🔒 SCD Tipo 0 – Retenção de Dados (Sem Mudanças)
+
+- Os dados não são atualizados.
+- Qualquer tentativa de alteração é ignorada.
+- Usado quando o dado deve permanecer fixo (ex.: CPF, CNPJ).
+
+### 🔁 SCD Tipo 1 – Sobrescrita Simples
+
+- Os dados antigos são sobrescritos pelos novos.
+- **Não há histórico** de alterações.
+- Simples de implementar, mas a perda de histórico pode ser um problema.
+
+### 📜 SCD Tipo 2 – Histórico Completo
+
+- Cada alteração gera uma **nova linha** na tabela de dimensões.
+- Permite manter um **histórico completo** das mudanças.
+- Comum usar:
+  - Colunas de **data de início e fim**.
+  - Coluna de **versão** (ex.: V1, V2, etc.).
+  - Coluna de **status** (ativo/inativo), geralmente combinada com as opções acima.
+
+### 🔄 SCD Tipo 3 – Histórico Limitado
+
+- Mantém apenas o **valor atual** e o **valor anterior** em colunas separadas.
+- Indicado quando apenas **uma mudança** precisa ser registrada.
+
+### 🗃️ SCD Tipo 4 – Tabela Histórica Separada
+
+- A tabela principal armazena apenas o **dado atual**.
+- Uma **tabela separada** armazena todas as mudanças históricas.
+- Boa opção para isolar o histórico e manter a performance da dimensão principal.
+
+### 🧩 SCD Tipo 5 – Tipo 1 + Tipo 4
+
+- Combina os métodos do **Tipo 1** e **Tipo 4**.
+- A dimensão principal é atualizada com o novo dado (**sobrescrita**).
+- A tabela histórica separada registra todas as versões anteriores.
+
+### 🧬 SCD Tipo 6 – Dimensão Híbrida (Tipo 1 + 2 + 3)
+
+- Combina os métodos dos tipos **1, 2 e 3**.
+- Permite sobrescrever valores, criar registros históricos e armazenar mudanças limitadas — tudo na mesma estrutura.
+- É a abordagem mais completa e flexível, porém mais complexa de implementar.
+
+---
+
+## Exemplos
+
+*Adicione aqui exemplos práticos conforme necessário, como tabelas, trechos de SQL ou diagramas.*
+
