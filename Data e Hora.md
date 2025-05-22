@@ -22,6 +22,11 @@ DELETE FROM database.table
 WHERE DATE_TRUNC('day', column) = CURRENT_DATE;
 ```
 
+## UTC 
+```sql
+CONVERT_TIMEZONE('UTC', 'America/Sao_Paulo', SYSDATE) AS dat_load
+```
+
 ## 
 ```sql
 
