@@ -27,6 +27,16 @@ WHERE DATE_TRUNC('day', column) = CURRENT_DATE;
 CONVERT_TIMEZONE('UTC', 'America/Sao_Paulo', SYSDATE) AS dat_load
 ```
 
+## Intervao de Datas
+```sql
+WHERE dat_date >= CURRENT_DATE - 30 
+  AND dat_date < CURRENT_DATE
+```
+```sql
+WHERE dat_date BETWEEN CURRENT_DATE - 30 AND CURRENT_DATE - 1
+
+```
+
 ## 
 ```sql
 
