@@ -125,4 +125,30 @@ ORDER BY c.mes;
 
 📎 **Nota interna:**  
 O uso de `DATE_TRUNC` dentro do `WHERE` deve ser evitado em tabelas de fatos muito volumosas, pois pode inviabilizar o uso de índices.  
-Padronizar sempre em **comparação direta** garante performance e consistência.  
+Padronizar sempre em **comparação direta** garante performance e consistência.
+
+## Escolha entre `INTERVAL` e `ADD_MONTHS`
+
+Existem duas formas comuns de calcular datas relativas em filtros mensais:
+
+- **Usando `CURRENT_DATE - INTERVAL '6 months'`**
+  - Mais legível
+  - Padrão SQL ANSI
+  - Recomendado no PostgreSQL para consistência e clareza
+
+- **Usando `ADD_MONTHS(CURRENT_DATE, -6)`**
+  - Mais comum em ambientes que imitam Oracle ou Redshift
+  - Útil para times que já padronizaram este estilo
+  - Precisa de cuidado para sempre alinhar com `DATE_TRUNC('month', ...)`
+
+### Exemplo equivalente
+
+```sql
+-- Forma recomendada (PostgreSQL puro)
+WHERE dat_reference >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '6 months')
+  AND dat_reference <  DATE_TRUNC('month', CURRENT_DATE)
+
+-- Forma alternativa (compatibilidade Oracle/Redshift)
+WHERE dat_reference >= DATE_TRUNC('month', ADD_MONTHS(CURRENT_DATE, -6))
+  AND dat_reference <  DATE_TRUNC('month', CURRENT_DATE)
+```
