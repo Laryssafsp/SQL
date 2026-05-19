@@ -328,7 +328,72 @@ WHERE tablename = '<tabela_externa>';
 * Verificar CTAS
 * Mapear dependências
 
-Este fluxo permite montar lineage completo SEM ferramentas externas.
+No Amazon Redshift, existem várias formas de listar todas as tabelas de um banco de dados, dependendo se você quer usar SQL, metacomandos ou AWS CLI.
+Segue um resumo das opções mais comuns para ver todas as tabelas (incluindo internas, externas e de todos os esquemas):
 
+## Usando o comando SHOW TABLES (SQL nativo do Redshift)
+O comando SHOW TABLES lista tabelas de um esquema específico, com opção de filtro e limite 
+```
+-- Lista todas as tabelas do esquema 'public'
+SHOW TABLES FROM SCHEMA dev.public;
+
+
+-- Lista todas as tabelas que terminam com 'view' no esquema 's1'
+SHOW TABLES FROM SCHEMA dev.s1 LIKE '%view';
+
+-- Limita a 50 resultados
+SHOW TABLES FROM SCHEMA dev.public LIMIT 50;
+```
+Obs.: Se houver mais de 10.000 tabelas no resultado, o comando retorna erro.
+
+## Usando a visão de sistema SVV_ALL_TABLES
+Essa visão retorna todas as tabelas (internas e externas) que o usuário tem permissão para ver 
+```
+-- Todas as tabelas visíveis no banco
+SELECT database_name, schema_name, table_name, table_type
+FROM svv_all_tables
+ORDER BY database_name, schema_name, table_name;
+
+-- Você pode filtrar por esquema ou banco:
+
+SELECT * 
+FROM svv_all_tables
+WHERE database_name = 'meu_banco'
+  AND schema_name = 'public';
+```
+## Usando pg_table_def (catálogo interno)
+Lista tabelas e colunas de um esquema 
+```
+SELECT DISTINCT schemaname, tablename
+FROM pg_table_def
+WHERE schemaname NOT IN ('pg_catalog', 'information_schema')
+ORDER BY schemaname, tablename;
+```
+## Usando metacomando \d no RSQL
+Se estiver no Query Editor v2 ou cliente compatível com RSQL 
+```
+\d        -- Lista tabelas e views do esquema atual
+\dS       -- Inclui objetos do sistema
+\d+       -- Mostra metadados adicionais
+```
+##  Usando AWS CLI (redshift-data list-tables)
+Se preferir via terminal 
+```
+Copiar código
+aws redshift-data list-tables \
+    --cluster-identifier meu-cluster \
+    --database dev \
+    --schema public \
+    --db-user meu_usuario
+```
+✅ Recomendação:
+Se você quer todas as tabelas de todos os esquemas com um único comando SQL, use:
+```
+SELECT database_name, schema_name, table_name, table_type
+FROM svv_all_tables
+ORDER BY database_name, schema_name, table_name;
+Isso cobre tabelas internas, externas e compartilhadas, respeitando suas permissões.
+Este fluxo permite montar lineage completo SEM ferramentas externas.
+```
 ---
 
